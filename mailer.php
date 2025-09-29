@@ -1,12 +1,30 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 //Import PHPMailer classes into the global namespace
 //These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 //Load Composer's autoloader (created by composer, not included with PHPMailer)
 require 'vendor/autoload.php';
+
+// Create the logger
+$log = new Logger('complaint_logger');
+
+// Create a handler: log everything from DEBUG and up
+$log->pushHandler(new StreamHandler(__DIR__ . '/logs/complaints.log', "debug"));
+
+// Example log messages
+$log->info('Complaint form loaded');
+$log->warning('User submitted an empty complaint');
+$log->error('Failed to save complaint to database');
 
 //Create an instance; passing `true` enables exceptions
 $mail = new PHPMailer(true);
